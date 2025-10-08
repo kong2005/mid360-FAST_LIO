@@ -1,0 +1,51 @@
+<launch>
+    <!-- RViz 参数 -->
+    <arg name="rviz" default="true"/>
+    <!-- UAV model -->
+    <arg name="UAV_model" value="$(find livox_laser_simulation)/models/sensors_only/model.sdf" />
+    <!-- Initial position -->
+    <arg name="x" value="0" />
+    <arg name="y" value="0" />
+    <arg name="z" value="0.1" />
+
+    <!-- World file -->
+    <arg name="world" default="$(find livox_laser_simulation)/worlds/test_livox.world" />
+
+    <!-- Gazebo physics parameters -->
+    <param name="/gazebo/max_step_size" value="0.002"/>
+    <param name="/gazebo/real_time_update_rate" value="500"/>
+
+    <!-- Unique model name using HOSTNAME + coordinates -->
+    <arg name="model_name" default="iris_demo_$(env HOSTNAME)_$(arg x)_$(arg y)_$(arg z)"/>
+
+    <!-- Launch Gazebo empty world -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(arg world)"/>
+        <arg name="paused" value="false"/>
+        <arg name="use_sim_time" value="true"/>
+        <arg name="gui" value="true"/>
+        <arg name="headless" value="false"/>
+        <arg name="debug" value="false"/>
+        <arg name="verbose" value="true"/>
+    </include>
+
+    <!-- Spawn the UAV with unique model name -->
+    <node name="spawn_model" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+          args="-file $(arg UAV_model) -x $(arg x) -y $(arg y) -z $(arg z) -sdf -model $(arg model_name)" />
+
+    <!-- TF: base_link -> lidar_link -->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="lidar_tf"
+          args="0 0 0.25 0 0 0 base_link lidar_link" />
+
+
+
+    <!-- Launch RViz only if rviz==true -->
+    <group if="$(arg rviz)">
+        <node name="rviz" pkg="rviz" type="rviz" args="-d $(find livox_laser_simulation)/rviz/test_pattern.rviz" />
+    </group>
+
+    <!-- 键盘控制 UAV (cmd_vel) -->
+    <node name="teleop" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py"
+          output="screen" args="cmd_vel:=/cmd_vel" />
+</launch>
+

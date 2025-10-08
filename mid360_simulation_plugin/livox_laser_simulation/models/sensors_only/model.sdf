@@ -1,0 +1,114 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <model name="iris_demo">
+    <!-- Base link for UAV / planar robot -->
+    <link name="base_link">
+      <pose>0 0 0.1 0 0 0</pose>
+      <inertial>
+        <mass>0.01</mass>
+        <inertia>
+          <ixx>0.01</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.01</iyy>
+          <iyz>0</iyz>
+          <izz>0.01</izz>
+        </inertia>
+      </inertial>
+
+      <collision name="base_collision">
+        <geometry>
+          <box><size>0.3 0.3 0.1</size></box>
+        </geometry>
+      </collision>
+      <visual name="base_visual">
+        <geometry>
+          <box><size>0.3 0.3 0.1</size></box>
+        </geometry>
+      </visual>
+
+      <!-- IMU sensor (inside base_link) -->
+      <sensor name="imu_sensor" type="imu">
+        <always_on>true</always_on>
+        <update_rate>200</update_rate>
+        <visualize>false</visualize>
+        <plugin name="imu_plugin" filename="libgazebo_ros_imu_sensor.so">
+          <topicName>/livox/imu</topicName>
+          <frameName>base_link</frameName>
+          <updateRate>200.0</updateRate>
+          <gaussianNoise>0.0</gaussianNoise>
+        </plugin>
+      </sensor>
+    </link>
+
+    <!-- Lidar link -->
+    <link name="lidar_link">
+      <pose>0 0 0.25 0 0 0</pose>
+      <inertial>
+        <mass>0.1</mass>
+        <inertia>
+          <ixx>0.0001</ixx><ixy>0</ixy><ixz>0</ixz>
+          <iyy>0.0001</iyy><iyz>0</iyz><izz>0.0001</izz>
+        </inertia>
+      </inertial>
+
+      <!-- 禁用物理漂移 -->
+      <gravity>0</gravity>
+      <kinematic>false</kinematic>
+
+      <sensor type="ray" name="laser_livox">
+        <pose>0 0 0 0 0 0</pose>
+        <visualize>true</visualize>
+        <always_on>true</always_on>
+        <update_rate>10</update_rate>
+
+        <plugin name="gazebo_ros_laser_controller" filename="liblivox_laser_simulation.so">
+          <visualize>true</visualize>
+          <samples>20000</samples>
+          <downsample>1</downsample>
+          <csv_file_name>mid360-real-centr.csv</csv_file_name>
+          <publish_pointcloud_type>2</publish_pointcloud_type>
+          <ros_topic>/livox/lidar</ros_topic>
+          <frameName>lidar_link</frameName>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>200</samples>
+                <resolution>1</resolution>
+                <min_angle>-3.1415926</min_angle>
+                <max_angle>3.1415926</max_angle>
+              </horizontal>
+              <vertical>
+                <samples>20</samples>
+                <resolution>1</resolution>
+                <min_angle>-0.52</min_angle>
+                <max_angle>0.52</max_angle>
+              </vertical>
+            </scan>
+            <range>
+              <min>0.1</min>
+              <max>50</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+        </plugin>
+      </sensor>
+    </link>
+<!-- 添加固定 joint -->
+    <joint name="lidar_fixed" type="fixed">
+      <parent>base_link</parent>
+      <child>lidar_link</child>
+      <pose>0 0 0.25 0 0 0</pose>
+    </joint>
+    <!-- Planar Move Plugin (键盘控制) -->
+    <plugin name="planar_move" filename="libgazebo_ros_planar_move.so">
+      <rosTopicName>/cmd_vel</rosTopicName>
+      <bodyName>base_link</bodyName>
+      <wheelSeparation>0.34</wheelSeparation>
+      <wheelDiameter>0.15</wheelDiameter>
+      <updateRate>100.0</updateRate>
+    </plugin>
+
+  </model>
+</sdf>
+

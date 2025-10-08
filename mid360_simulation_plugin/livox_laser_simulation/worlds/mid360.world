@@ -1,0 +1,33 @@
+<sdf version="1.6">
+  <world name="default">
+    <!-- 地面和光源 -->
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <!-- Mid360 雷达模型 -->
+    <model name="mid360_lidar">
+      <static>true</static>
+      <link name="lidar_link">
+        <pose>0 0 1 0 0 0</pose> <!-- 高度 1 米 -->
+
+        <!-- Livox 点云插件 -->
+        <plugin name="livox_laser" filename="liblivox_laser_simulation.so">
+          <ros_topic>/livox/lidar</ros_topic>
+          <frameName>livox</frameName>
+          <csv_file_name>mid360-real-centr.csv</csv_file_name> <!-- 放在 scan_mode 文件夹下 -->
+          <update_rate>10</update_rate>
+          <samples>128</samples>
+          <downsample>1</downsample>
+          <publish_pointcloud_type>1</publish_pointcloud_type>
+          <visualize>true</visualize>
+        </plugin>
+
+      </link>
+    </model>
+  </world>
+</sdf>
+

@@ -1,0 +1,19 @@
+<launch>
+  <arg name="rviz" default="true"/>
+
+  <!-- 1. 启动 Livox 雷达仿真 -->
+  <include file="$(find livox_laser_simulation)/launch/test_pattern.launch">
+    <arg name="rviz" value="false"/>
+  </include>
+ 
+  <!-- 2. 启动 FAST_LIO -->
+  <include file="$(find fast_lio)/launch/reloc/reloc_mid360.launch">
+    <arg name="rviz" value="$(arg rviz)"/>
+  </include>
+
+  <!-- 3. 静态 TF: lidar_link 相对 base_link -->
+  <node pkg="tf2_ros" type="static_transform_publisher" name="lidar_tf_01"
+      args="0 0 0.25 0 0 0 base_link lidar_link"/>
+
+</launch>
+

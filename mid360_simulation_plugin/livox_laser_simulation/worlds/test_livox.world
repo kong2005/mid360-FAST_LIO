@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <world name="complex_world">
+    <!-- 地面 -->
+    <physics type="ode">
+      <max_step_size>0.001</max_step_size>          <!-- physics 步长 0.001s -->
+      <real_time_update_rate>1000</real_time_update_rate> <!-- Gazebo 尝试 1000Hz -->
+    </physics>
+
+
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+    <!-- 太阳光源 -->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <!-- 障碍物1：圆柱 -->
+    <model name="cylinder_1">
+      <pose>2 0 0.55 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>0.3</radius>
+              <length>1.0</length>
+            </cylinder>
+          </geometry>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <cylinder>
+              <radius>0.3</radius>
+              <length>1.0</length>
+            </cylinder>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- 障碍物2：箱子 -->
+    <model name="box_1">
+      <pose>3 1 0.5 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>1 1 1</size>
+            </box>
+          </geometry>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>1 1 1</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- 障碍物3：球体 -->
+    <model name="sphere_1">
+      <pose>1 -2 0.5 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <sphere>
+              <radius>0.5</radius>
+            </sphere>
+          </geometry>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <sphere>
+              <radius>0.5</radius>
+            </sphere>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- 障碍物4：自定义网格 -->
+    <model name="mesh_obstacle">
+      <pose>0 -3 0.5 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <mesh><uri>pattern_test.dae</uri></mesh>
+          </geometry>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <mesh><uri>pattern_test.dae</uri></mesh>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+
+  </world>
+</sdf>
+
