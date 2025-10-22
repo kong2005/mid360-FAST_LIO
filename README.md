@@ -91,4 +91,5 @@ common:
     imu_topic:  "/livox/imu"
 ```
 - 如果 Gazebo 场景中没有障碍物，可以修改 `worlds/mid360.world` 或 `test_pattern.world` 文件，自定义环境
-
+完成Fast启动，要修改rviz成这样
+<img width="483" height="1005" alt="image" src="https://github.com/user-attachments/assets/1e5691ec-b6d3-403b-aba9-24fabe0be599" />
